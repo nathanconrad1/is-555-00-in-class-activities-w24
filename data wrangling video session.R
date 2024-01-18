@@ -5,6 +5,10 @@ df <- starwars
 # Grouping ----------------------------------------------------------------
 
 
+
+#f1 lets you see the documentation
+
+
 # top 5 tallest overall - using slice_head
 df %>% 
   arrange(desc(height)) %>% 
@@ -19,7 +23,10 @@ df %>%
 # what is the shortest character for each species? 
 df %>% 
   group_by(species) %>% 
-  slice_max(height)
+  slice_min(height, with_ties = F)
+
+df %>% 
+  count(height, sort = T)
 
 df %>% 
   group_by(species) %>% 
@@ -49,6 +56,12 @@ df %>%
   group_by(homeworld,gender) %>% 
   summarize(count = n(),
             avg_birth_year = mean(birth_year, na.rm = T))
+
+df %>% 
+  group_by(species) %>% 
+  slice_min(mass, n =1, with_ties = F) %>% 
+  group_by(sex) %>% 
+  summarize(avg_height = mean(height, na.rm = T))
 
 
 # Joins -------------------------------------------------------------------
