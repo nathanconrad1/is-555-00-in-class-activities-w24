@@ -11,6 +11,11 @@ df %>%
   
 
 
+
+
+#bind_row()
+
+
 # iteratively add operations: 
 # height > 100, sex == female, 
 # choose name, height, mass, species, films, 
@@ -44,6 +49,8 @@ df %>%
 
 
 # Lots of NAs for average... why? Even for large groups it's NA...
+df %>% 
+  slice(1:10)
 
 
 # Humans definitely have SOME mass data...
