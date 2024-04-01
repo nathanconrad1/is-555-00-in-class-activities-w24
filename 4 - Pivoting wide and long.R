@@ -146,8 +146,31 @@ bob <- read_csv('https://www.dropbox.com/s/mozqpceit51hia7/bob_ross.csv?dl=1')
 # what is the most common income bracket for each religion?
 
 
+<<<<<<< HEAD
 bob %>% 
   glimpse
+=======
+ri_long <- ri %>% 
+  pivot_longer(
+    cols = !religion,
+    names_to = 'income_bracket',
+    values_to = 'household_num'
+  )
+
+ri_long %>% 
+  group_by(religion)
+
+
+
+
+
+bad_drivers_long %>% 
+  pivot_wider(
+    names_from = statistic,
+    values_from = num
+  )
+
+>>>>>>> 2be582f967e0a238622433955f9138e053063560
 
 
 # IMPORTANT: Notice how EASY it is to find the top income for each religion because
@@ -165,8 +188,16 @@ ri %>%
 
 
 
+bob_long <- bob %>% 
+  pivot_longer(
+    cols = !episode:title,
+    names_to = 'attribute',
+    values_to = 'is_present'
+  ) %>% 
+  filter(is_present == 1)
 
 
+<<<<<<< HEAD
 # which objects occur most frequently?
 
 
@@ -217,4 +248,27 @@ songs %>%
 
 
 
+=======
+bob_long %>% 
+  group_by(attribute) %>% 
+  summarise(frequency = sum(is_present)) %>% 
+  arrange((desc(frequency)))
+>>>>>>> 2be582f967e0a238622433955f9138e053063560
 
+
+#what was the season where bob painted the most mountains
+
+bob_long %>% 
+  group_by(season) %>% 
+  summarise(mtn_count = sum(str_detect(attribute,  'mountain') & is_present == 1)) %>% 
+  arrange(desc(mtn_count))
+
+
+bob_long %>% 
+  select(attribute, season, is_present) %>% 
+  group_by(season, attribute) %>% 
+  summarise(attribute_count = sum(is_present)) %>% 
+  pivot_wider(
+    names_from = season,
+    values_from = attribute_count
+  )
