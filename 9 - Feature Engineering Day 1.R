@@ -26,7 +26,18 @@ df %>% glimpse
 
 # Get a feel for the missingness
 
+df %>% 
+  summarize(count_pclass_na = sum(is.na(pclass)))
+df %>% 
+  summarise((across(everything(), ~sum(is.na(.x)))))
 
+df %>% 
+  group_by(is.na(cabin)) %>% 
+  summarise(across(everything(), ~mean(.x, na.rm = T)))
+
+df %>% 
+  group_by(is.na(age)) %>% 
+  summarise(across(everything(), ~mean(.x, na.rm = T)))
 
 # first check: is the missingness relevant?
 # use summarize across

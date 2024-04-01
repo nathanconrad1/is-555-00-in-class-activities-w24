@@ -4,18 +4,52 @@ df <- read_csv('https://www.dropbox.com/scl/fi/a37h3rf9rmi7yw9pg4n16/titanic_day
 
 
 # Outlier Treatments ------------------------------------------------------------------------------------
+df %>% 
+  glimpse()
+
+
 
 
 # Pass the four columns to summary() to check means, maxes
 outlier_candidates <- c('age', 'sib_sp', 'parch', 'fare')
 
+df %>% 
+  select(all_of(outlier_candidates)) %>% 
+  summary()
+
+df %>% 
+  select(all_of(outlier_candidates)) %>% 
+  pivot_longer(everything(),
+               names_to = 'name',
+               values_to = 'value') %>% 
+  ggplot(aes(y = value, fill = name)) +
+  geom_boxplot()+
+  facet_wrap(~name, scales = 'free_y')
+  
 
 # calculate extreme threshold caps based on 99th percentile
+age_cap <- quantile(df$age, .99)
+sib_sp_cap <- quantile(df$sib_sp, .99)
+parch_cap_cap <- quantile(df$parch, .99)
+fare_cap <- quantile(df$fare, .99)
+
 
 
 # Now check how many are beyond the percentile caps
 
-# cap age and fare, and check work before saving
+
+df %>% 
+  summarise(
+    count_age_past_99 = sum(age> age_cap),
+    count_sib_sp_past_99 = sum(sib_sp> sib_sp_cap),
+    count_parch_past_99 = sum(parch> parch_cap_cap),
+    count_fare_past_99 = sum(fare> fare_cap)
+  )
+
+# cap fare, and check work before saving
+
+df <- df %>% 
+  mutate(fare = if_else(fare > fare_cap, fare_cap, fare))
 
 
 
@@ -45,6 +79,13 @@ tribble(
 
 # Examine distributions of age and fare
 
+df %>% 
+  select(age, fare) %>% 
+  pivot_longer(everything()) %>% 
+  ggplot(aes(x = value, fill = name))+
+  geom_density(alpha = .5)+
+  facet_wrap(~name, ncol = 1)
+
 
   
 # Let's transform the fare column
@@ -66,7 +107,12 @@ df %>%
     fare_th  = fare^(1/2),
     fare_t1  = fare^1,
     fare_t2  = fare^2
-  ) 
+  ) %>% 
+  select(starts_with('fare_')) %>% 
+  pivot_longer(everything()) %>% 
+  ggplot(aes(x = value, fill = name))+
+  geom_density(alpha = .5)+
+  facet_wrap(~name, ncol = 1, scales = 'free')
 
 # now let's visualize the effect of the transformations to see 
 # which one makes sense.
